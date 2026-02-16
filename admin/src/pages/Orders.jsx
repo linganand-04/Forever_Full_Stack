@@ -125,7 +125,7 @@ function Orders(token) {
           })
         ) : (
           <div className="mx-auto flex items-center justify-center mt-15">
-            <Commet color={["#c586a5"]} size="small" text="" textColor="" />
+            No orders found
           </div>
         )}
       </div>

@@ -74,6 +74,8 @@ function App() {
           <Route path="/products/:productId" element={<Product />} />
           <Route path="/login" element={<Login />} />
           <Route path="/verify" element={<Verify />} />
+
+          <Route path="*" element={<PageNotFound />} />
         </Routes>
       </div>
 
