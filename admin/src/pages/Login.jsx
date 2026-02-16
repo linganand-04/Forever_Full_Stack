@@ -4,8 +4,8 @@ import axios from "axios";
 import { toast, Bounce } from "react-toastify";
 
 const Login = ({ setToken }) => {
-  const [email, setEmail] = useState("admin@Lian.com");
-  const [password, setPassword] = useState("qwerty123");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [show, setshow] = useState(false);
 
   function handleShowPassword(e) {
