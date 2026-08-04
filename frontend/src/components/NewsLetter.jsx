@@ -12,8 +12,7 @@ function NewsLetter() {
           Subscribe now &amp; get 20% off
         </p>
         <p className="text-gray-400 mt-3">
-          Lorem Ipsum is simply dummy text of the printing and typesetting
-          industry.
+          Join our newsletter to receive exclusive offers, new arrivals, and fashion updates delivered straight to your inbox.
         </p>
 
         <form className="w-full sm:w-1/2 flex items-center gap-3 mx-auto my-6 border pl-3">

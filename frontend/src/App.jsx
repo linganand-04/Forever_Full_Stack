@@ -10,12 +10,15 @@ import PlaceOrder from "./pages/PlaceOrder";
 import Product from "./pages/Product";
 import Login from "./pages/Login";
 import Orders from "./pages/Orders";
-import Verify from "./pages/Verify";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import PageNotFound from "./pages/PageNotFound";
 import SearchBar from "./components/SearchBar";
 import Network from "./components/Network";
+import ForgetPassword from "./pages/ForgetPassword";
+import Signup from "./pages/Signup";
+import ResetPassword from "./pages/ResetPassword";
+import ResendResetLink from "./pages/ResendResetPassword";
 // import { products } from "./assets/frontend_assets/assets";
 
 // console.log(products)
@@ -42,9 +45,7 @@ function App() {
       setShowStatus(true);
 
       clearTimeout(timer);
-      // setShowStatus(false);
-      // timer = setTimeout(() => {
-      // }, 1000);
+
     }
 
     window.addEventListener("online", handleOnline);
@@ -73,8 +74,12 @@ function App() {
           <Route path="/orders" element={<Orders />} />
           <Route path="/products/:productId" element={<Product />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/verify" element={<Verify />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/forgot-password" element={<ForgetPassword />} />
+          <Route path="/resend-forgot-password/:token" element={<ResendResetLink />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
 
+          {/* Page Not Found */}
           <Route path="*" element={<PageNotFound />} />
         </Routes>
       </div>

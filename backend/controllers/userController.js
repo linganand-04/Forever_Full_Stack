@@ -2,17 +2,20 @@ import { userModel } from "../models/userModel.js";
 import validator from "validator";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import crypto from "crypto";
+import sendEmail from "../utils/sendEmail.js";
 
 const createToken = (id) => {
-  console.log(id);
   return jwt.sign({ id }, process.env.JWT_SECRET);
 };
 
-// Route for user login
+//////////////////////////
+// Route for user login //
+//////////////////////////
 const loginUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    console.log(req.body);
+    // console.log(req.body);
 
     // 1️⃣ Validate input
     if (!email || !password) {
@@ -50,7 +53,6 @@ const loginUser = async (req, res, next) => {
       token,
     });
   } catch (err) {
-    console.error("Login error:", err);
     return res.status(500).json({
       success: false,
       message: "Login failed",
@@ -58,11 +60,13 @@ const loginUser = async (req, res, next) => {
   }
 };
 
+//////////////////////////
 // Route for user register
+//////////////////////////
 const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
-    console.log("BODY:", req.body);
+    // console.log("BODY:", req.body);
 
     // 1. Required fields check
     if (!name || !email || !password) {
@@ -107,36 +111,219 @@ const registerUser = async (req, res) => {
     const user = await newUser.save();
     const token = createToken(user._id);
 
-    res.send({ success: true, token });
+    return res.send({
+      success: true,
+      message: "Register successful",
+      token,
+    });
   } catch (err) {
-    console.log(err);
-    res.send({ success: false, message: `${err.message}` });
+    return res.send({ success: false, message: `${err.message}` });
+  }
+};
+///////////////////////////////
+// Route For Forget Password //
+///////////////////////////////
+
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const user = await userModel.findOne({ email });
+
+    if (!user) {
+      return res.json({
+        success: false,
+        message: "No account found with this email.",
+      });
+    }
+
+    // Generate token
+    const resetToken = crypto.randomBytes(32).toString("hex");
+
+    // console.log("RESET TOKEN:", resetToken);
+
+    // Save hashed token
+    user.resetPasswordToken = resetToken;
+
+    user.resetPasswordExpire = Date.now() + 15 * 60 * 1000; // 15 min
+
+    await user.save();
+
+    const resetUrl = `${process.env.FRONTEND_URL}/reset-password/token=${resetToken}`;
+
+    const html = `
+      <h2>Password Reset</h2>
+
+      <p>You requested to reset your password.</p>
+
+      <a href="${resetUrl}">
+        Reset Password
+      </a>
+
+      <p>This link expires in 15 minutes.</p>
+    `;
+
+    await sendEmail(user.email, "Password Reset", html);
+
+    return res.json({
+      success: true,
+      message: "Password reset link sent.",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
   }
 };
 
-// Route for admin login
+////////////////////////////
+// Route for Verify Token //
+////////////////////////////
+const verifyResetToken = async (req, res) => {
+  try {
+    const { token } = req.params;
+
+    const user = await userModel.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpire: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.json({
+        success: false,
+        message: "Invalid or expired reset link.",
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: "Token is valid.",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Server error.",
+    });
+  }
+};
+
+///////////////////////////////
+// Route for Reset Password ///
+///////////////////////////////
+const resetPassword = async (req, res) => {
+  try {
+    const { token } = req.params;
+
+    const user = await userModel.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpire: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.json({
+        success: false,
+        message: "Invalid or expired token.",
+      });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+
+    user.password = await bcrypt.hash(req.body.password, salt);
+
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+
+    await user.save();
+
+    return res.json({
+      success: true,
+      message: "Password reset successful.",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+//////////////////////////////////////
+// Route for Resend Forgot Password //
+//////////////////////////////////////
+const resendForgotPassword = async (req, res) => {
+  try {
+    const { token } = req.params;
+
+    if (!token) {
+      return res.status(400).json({
+        success: false,
+        message: "Token is required.",
+      });
+    }
+
+    // Find user even if token has expired
+    const user = await userModel.findOne({
+      resetPasswordToken: token,
+    });
+
+    if (!user) {
+      return res.json({
+        success: false,
+        message: "Invalid reset token.",
+      });
+    }
+
+    // Generate NEW token
+    const newResetToken = crypto.randomBytes(32).toString("hex");
+
+    // Replace old token
+    user.resetPasswordToken = newResetToken;
+
+    // New 15-minute expiry
+    user.resetPasswordExpire = Date.now() + 15 * 60 * 1000;
+
+    await user.save();
+
+    // Raw token goes in email
+    const resetUrl = `${process.env.FRONTEND_URL}/reset-password/token=${newResetToken}`;
+
+    const html = `
+      <h2>Reset Your Password</h2>
+
+      <p>You requested a new password reset link.</p>
+
+      <a href="${resetUrl}">
+        Reset Password
+      </a>
+
+      <p>This link expires in 15 minutes.</p>
+
+      <p>
+        If you didn't request this, you can ignore this email.
+      </p>
+    `;
+
+    await sendEmail(user.email, "New Password Reset Link", html);
+
+    return res.status(200).json({
+      success: true,
+      message: "A new reset link has been sent to your email.",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Unable to resend password reset email.",
+    });
+  }
+};
+
+///////////////////////////////
+//// Route for admin login ////
+///////////////////////////////
 const adminLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
-
-    // let adminEmail = process.env.ADMIN_EMAIL;
-    // let adminPassword = process.env.ADMIN_PASSWORD;
-
-    // // Request Verification
-    // if (!email === process.env.ADMIN_EMAIL || !password)
-    //   return res
-    //     .status(400)
-    //     .send({ success: false, message: "Fields are required.." });
-
-    // // Email Verification
-    // if (adminEmail !== email)
-    //   return res.status(400).send({ success: false, message: "Unauthorized" });
-
-    // // Password Verification
-    // if (adminPassword !== password)
-    //   return res
-    //     .status(400)
-    //     .send({ success: false, message: "Password Incorrect" });
 
     // Admin Login Success
     if (
@@ -154,8 +341,19 @@ const adminLogin = async (req, res) => {
       res.json({ success: false, message: "Invalid credentials" });
     }
   } catch (err) {
-    console.log(err.message);
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
   }
 };
 
-export { loginUser, registerUser, adminLogin };
+export {
+  loginUser,
+  registerUser,
+  adminLogin,
+  resetPassword,
+  verifyResetToken,
+  forgotPassword,
+  resendForgotPassword,
+};

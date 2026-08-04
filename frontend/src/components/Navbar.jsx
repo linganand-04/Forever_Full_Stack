@@ -75,24 +75,29 @@ function Navbar() {
             </NavLink>
 
             <div className="group relative">
-              <Link to={"/login"}>
+              {token ? (
                 <img
-                  onClick={() => {
-                    token ? null : navigate("/login");
-                  }}
                   src={assets.profile_icon}
-                  className=" cursor-pointer w-5"
-                  alt=""
+                  className="w-5 cursor-pointer"
+                  alt="Profile"
                 />
-              </Link>
+              ) : (
+                <Link to="/login">
+                  <img
+                    src={assets.profile_icon}
+                    className="w-5 cursor-pointer"
+                    alt="Profile"
+                  />
+                </Link>
+              )}
 
               {/* Dropdown Menu */}
               {token && (
                 <div className="group-hover:block hidden absolute pt-4 dropdown-menu right-0">
                   <div className="flex flex-col items-center w-36 gap-2 py-3 px-5 bg-slate-100 text-gray-500 rounded">
-                    <p className="cursor-pointer hover:text-black">
+                    {/* <p className="cursor-pointer hover:text-black">
                       My Profile
-                    </p>
+                    </p> */}
                     <p className="cursor-pointer hover:text-black">
                       <NavLink to={"/orders"}>Orders</NavLink>
                     </p>
@@ -133,9 +138,8 @@ function Navbar() {
 
           {/* SideBar Menu for small screens */}
           <div
-            className={`absolute top-0 right-0 bottom-0 overflow-hidden bg-white transition-all ${
-              visible ? "w-full" : "w-0"
-            } `}
+            className={`absolute top-0 right-0 bottom-0 overflow-hidden bg-white transition-all ${visible ? "w-full" : "w-0"
+              } `}
           >
             <div className="flex flex-col text-gray-600">
               <div

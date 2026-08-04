@@ -22,7 +22,7 @@ function Orders(token) {
         { headers: token },
       );
       if (res.data.success) {
-        console.log(res.data.orders[0]);
+    
         setOrders(res.data.orders);
       } else {
         toast.error(res.data.message);
@@ -43,7 +43,7 @@ function Orders(token) {
       if (res.data.success) {
         await fetchAllOrder();
         setStatus(e.target.value);
-        console.log(res);
+       
       }
     } catch (err) {
       toast.error(err.message);

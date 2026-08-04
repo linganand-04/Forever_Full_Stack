@@ -19,8 +19,10 @@ const adminAuth = async (req, res, next) => {
     }
     next();
   } catch (err) {
-    // console.log(err.message);
-    console.log(err);
+    return res.json({
+      success: false,
+      message: err.message,
+    });
   }
 };
 

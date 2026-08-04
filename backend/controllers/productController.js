@@ -43,16 +43,16 @@ const addProduct = async (req, res) => {
     );
 
     // 4️⃣ Debug logs (remove in production)
-    console.log(
-      name,
-      price,
-      description,
-      category,
-      subCategory,
-      sizes,
-      bestseller
-    );
-    console.log(imageUrls);
+    // console.log(
+    //   name,
+    //   price,
+    //   description,
+    //   category,
+    //   subCategory,
+    //   sizes,
+    //   bestseller
+    // );
+    // console.log(imageUrls);
 
     // 5️⃣ Success response (later → save to DB)
 
@@ -151,7 +151,7 @@ const singleProduct = async (req, res) => {
       return res
         .status(404)
         .send({ success: false, message: "Product ID Required.." });
-    console.log(productID);
+    // console.log(productID);
     const product = await productModel.findById(productID);
 
     return res.send({ success: true, product });

@@ -6,17 +6,17 @@ function OurPolicy() {
     {
       image: assets.exchange_icon,
       title: "Easy Exchange Policy",
-      content: "We offer hassle free exchange policy",
+      content: "Exchange eligible products quickly with our hassle-free process.",
     },
     {
       image: assets.quality_icon,
       title: "7 Days Return Policy",
-      content: "We provide 7 days free return policy",
+      content: "Shop with confidence using our simple 7-day return policy.",
     },
     {
       image: assets.support_img,
       title: "Best customer support",
-      content: "we provide 24/7 customer support",
+      content: "Our support team is always ready to help whenever you need assistance.",
     },
   ];
 

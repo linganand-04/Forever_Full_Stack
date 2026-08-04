@@ -34,7 +34,7 @@ function Collection() {
   }
 
   function handleSort(e) {
-    console.log(e.target.value);
+    // console.log(e.target.value);
     setProductSort(e.target.value);
   }
 
@@ -46,7 +46,7 @@ function Collection() {
         item.name.toLowerCase().includes(search.toLowerCase())
       );
 
-      console.log(productsCopy);
+      // console.log(productsCopy);
     }
 
     if (category.length > 0) {

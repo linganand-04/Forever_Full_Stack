@@ -2,31 +2,30 @@ import { useState } from "react";
 import { backendURL } from "../context/helper";
 import axios from "axios";
 import { toast, Bounce } from "react-toastify";
+import Hide from "../components/icons/Hide"
+import Show from "../components/icons/Show"
 
 const Login = ({ setToken }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [show, setshow] = useState(false);
 
-  function handleShowPassword(e) {
-    e.preventDefault();
-
+  function handleShowPassword() {
     setshow((prev) => !prev);
   }
 
   async function onSubmitHandler(e) {
+    e.preventDefault();
     try {
-      e.preventDefault();
 
       const res = await axios.post(`${backendURL}/api/user/admin`, {
         email,
         password,
       });
-      console.log(res);
 
       if (res.data.success) {
         const { token } = await res.data;
-        console.log(token)
+
         setToken(token);
       } else {
         toast.error(res.data.message, {
@@ -69,6 +68,7 @@ const Login = ({ setToken }) => {
                   value={email}
                 />
               </div>
+
               <div className="mb-3 min-w-72 relative">
                 <p className="text-sm font-medium text-gray-700 mb-2">
                   Password
@@ -83,13 +83,15 @@ const Login = ({ setToken }) => {
                   required={true}
                   value={password}
                 />
-                <button
-                  onClick={(e) => handleShowPassword(e)}
+                <p
+                  onClick={handleShowPassword}
                   className="absolute bottom-[12%] right-[4%] cursor-pointer flex items-center"
                 >
-                  {password.length === 0 ? "" : show ? "hide" : "show"}
-                </button>
+                  {password.length === 0 ? "" : show ? <Hide /> : <Show />}
+                </p>
               </div>
+
+
               <button
                 className="mt-2 w-full py-2 px-4 rounded-md text-white bg-black cursor-pointer"
                 type="submit"

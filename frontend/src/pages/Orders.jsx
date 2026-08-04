@@ -4,6 +4,7 @@ import Title from "../components/Title";
 import { useState } from "react";
 import axios from "axios";
 import { Commet } from "react-loading-indicators";
+import { toast } from "react-toastify";
 
 function Orders() {
   const { backendUrl, token, currency, cartItems, navigate } =
@@ -46,9 +47,9 @@ function Orders() {
         setOrderData(allOrderItems.reverse());
       }
 
-      console.log(res);
+
     } catch (err) {
-      console.error(err.message);
+      toast.error(err?.message || err.response.data.message);
     }
   };
 

@@ -131,7 +131,7 @@ export const ShopContextProvider = ({ children }) => {
       const res = await axios.get(`${backendUrl}/api/product/list`);
       if (!res.data.success) return toast.error(res.data.message);
       const { products } = res.data;
-      console.log(products);
+      // console.log(products);
       setProducts(products);
     } catch (err) {
       toast.error(err.message);
@@ -157,7 +157,6 @@ export const ShopContextProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    console.log("Working");
     getProductsData();
     localStorage.setItem("cartItem", JSON.stringify(cartItems));
 
@@ -166,7 +165,7 @@ export const ShopContextProvider = ({ children }) => {
       getUserCart(localStorage.getItem("token"));
       getCartCount(localStorage.getItem("token"))
     }
-  }, [cartItems, token]);
+  }, [cartItems, token, getProductsData, getCartAmount, getCartCount]);
 
   const value = {
     products,
