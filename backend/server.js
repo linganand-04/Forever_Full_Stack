@@ -15,10 +15,9 @@ const port = process.env.PORT || 4000;
 // Middlewares
 app.use(express.json());
 
-const allowedOrigins = [
-  process.env.FRONTEND_URL,
-  process.env.ADMIN_URL,
-];
+console.log(process.env.FRONTEND_URL, process.env.ADMIN_URL);
+
+const allowedOrigins = [process.env.FRONTEND_URL, process.env.ADMIN_URL];
 
 app.use(
   cors({
@@ -33,9 +32,8 @@ app.use(
       return callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
-  })
+  }),
 );
 
 // Routes
