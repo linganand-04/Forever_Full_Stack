@@ -64,10 +64,10 @@ function ResetPassword() {
     }
   };
 
-  useEffect(() => {
 
-    if (actualToken.length !== 63) {
-      toast.error("Invalid reset token.");
+  useEffect(() => {
+    if (actualToken.length !== 64) {
+      navigate("/pagenotfound")
       setCheckingToken(false);
       return
     }
@@ -95,15 +95,19 @@ function ResetPassword() {
           return
         }
 
-
         setTokenValid(true);
+
       } catch (error) {
         toast.error(
           error.response?.data?.message || "Invalid or expired reset link",
-
+          { autoClose: 2500 }
         );
 
+        setTokenValid(false);
 
+        setTimeout(() => {
+          navigate(`/resend-forgot-password/token=${actualToken}`);
+        }, 3000);
 
       } finally {
         setCheckingToken(false);
@@ -111,7 +115,23 @@ function ResetPassword() {
     };
 
     verifyToken();
-  }, [actualToken]);
+  }, [actualToken, navigate, backendUrl]);
+
+  if (checkingToken) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p>Verifying reset link...</p>
+      </div>
+    );
+  }
+
+  if (!tokenValid) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p>Redirecting...</p>
+      </div>
+    );
+  }
 
   return (
 

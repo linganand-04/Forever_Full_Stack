@@ -33,8 +33,10 @@ function ForgetPassword() {
       toast.success(res.data.message)
 
     } catch (err) {
-    
+
       toast.error(err?.reponse?.data?.message || err?.message)
+    } finally {
+      setLoading(false)
     }
 
   }
@@ -66,7 +68,7 @@ function ForgetPassword() {
           placeholder={"Email"}
         />
         <button disabled={loading} type="submit" className="w-full bg-black text-white py-3 cursor-pointer">
-          Send reset link
+          {loading ? "Sending..." : "Send reset link"}
         </button>
       </form>
 

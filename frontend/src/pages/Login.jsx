@@ -97,7 +97,7 @@ function Login() {
         </div>
 
         <button type="submit" className="bg-black text-white px-8 py-2 mt-4 cursor-pointer">
-          Sign In
+          Login
         </button>
       </form>
     </>

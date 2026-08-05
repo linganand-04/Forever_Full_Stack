@@ -15,8 +15,6 @@ const port = process.env.PORT || 4000;
 // Middlewares
 app.use(express.json());
 
-console.log(process.env.FRONTEND_URL, process.env.ADMIN_URL);
-
 const allowedOrigins = [process.env.FRONTEND_URL, process.env.ADMIN_URL];
 
 app.use(

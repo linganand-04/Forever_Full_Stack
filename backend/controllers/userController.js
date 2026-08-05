@@ -53,7 +53,7 @@ const loginUser = async (req, res, next) => {
       token,
     });
   } catch (err) {
-    return res.status(500).json({
+    return res.json({
       success: false,
       message: "Login failed",
     });
@@ -170,7 +170,7 @@ const forgotPassword = async (req, res) => {
       message: "Password reset link sent.",
     });
   } catch (err) {
-    return res.status(500).json({
+    return res.json({
       success: false,
       message: err.message,
     });
@@ -201,7 +201,7 @@ const verifyResetToken = async (req, res) => {
       message: "Token is valid.",
     });
   } catch (error) {
-    return res.status(500).json({
+    return res.json({
       success: false,
       message: "Server error.",
     });
@@ -241,7 +241,7 @@ const resetPassword = async (req, res) => {
       message: "Password reset successful.",
     });
   } catch (err) {
-    return res.status(500).json({
+    return res.json({
       success: false,
       message: err.message,
     });
@@ -311,7 +311,7 @@ const resendForgotPassword = async (req, res) => {
       message: "A new reset link has been sent to your email.",
     });
   } catch (error) {
-    return res.status(500).json({
+    return res.json({
       success: false,
       message: "Unable to resend password reset email.",
     });
@@ -341,7 +341,7 @@ const adminLogin = async (req, res) => {
       res.json({ success: false, message: "Invalid credentials" });
     }
   } catch (err) {
-    return res.status(500).json({
+    return res.json({
       success: false,
       message: err.message,
     });
