@@ -9,7 +9,7 @@ function Home() {
     <>
       <Hero />
       <LatestCollection />
-      <BestSellers />
+      {/* <BestSellers /> */}
       <OurPolicy />
       <NewsLetter />
     </>
